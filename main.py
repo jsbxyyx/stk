@@ -80,11 +80,11 @@ if __name__ == '__main__':
                             Db.dbExecute(insertStockKline, (date_, code_, open_, close_, high, low, volume, turnover,
                                                             amplitude, changeRate, changeAmount, turnoverRate))
                     else:
-                        print('detail kline get failed.')
+                        print('detail kline get failed. code : [{}]'.format(code_))
                 else:
-                    print('{} get failed'.format(detailUrl))
+                    print('[{}] get failed'.format(detailUrl))
                 print('code : {} OK'.format(code_))
         else:
             print('list stock get failed.')
     else:
-        print('{} get failed.'.format(url))
+        print('[{}] get failed.'.format(url))
