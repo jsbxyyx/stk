@@ -1,14 +1,15 @@
 # https://pypi.tuna.tsinghua.edu.cn/simple/
 # install lib : requests, mariadb
 
-import warnings
-
 import requests
 import time
 from datetime import datetime
 
 import Db
 from StockDao import StockDao
+
+import urllib3
+urllib3.disable_warnings()
 
 
 def getTimestamp():
