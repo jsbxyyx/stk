@@ -28,6 +28,5 @@ class StockDao(object):
         for (id, date, code, open, close, high, low, volume, turnover,
              amplitude, change_rate, change_amount, turnover_rate) in cursor:
             klineInfo = EastmoneyKlineInfo(id, code, date, open, close, high, low, volume, turnover, amplitude,
-                                           change_rate,
-                                           change_amount, turnover_rate)
+                                           change_rate, change_amount, turnover_rate)
         return klineInfo

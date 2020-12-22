@@ -42,4 +42,3 @@ def dbExecute(fun, params=()):
         conn.rollback()
     finally:
         conn.close()
-
