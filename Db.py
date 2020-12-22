@@ -43,6 +43,7 @@ def execute(fun, params=()):
     finally:
         conn.close()
 
+
 def batchUpdate(sql, paramsList):
     try:
         conn = getConnection()
@@ -56,4 +57,3 @@ def batchUpdate(sql, paramsList):
         conn.rollback()
     finally:
         conn.close()
-
