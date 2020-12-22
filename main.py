@@ -43,7 +43,7 @@ if __name__ == '__main__':
                 iitem = diff[i]
                 code_ = '{}.{}'.format(iitem['f13'], iitem['f12'])
                 name = iitem['f14']
-                Db.dbExecute(StockDao.insertStockAll, (code_, name, getTimeString()))
+                Db.execute(StockDao.insertStockAll, (code_, name, getTimeString()))
 
                 klineInfo = Db.execute(StockDao.selectLastKlineByCode, (code_,))
                 lmt = 36500
