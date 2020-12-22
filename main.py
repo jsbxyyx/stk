@@ -45,7 +45,7 @@ if __name__ == '__main__':
                 name = iitem['f14']
                 Db.dbExecute(StockDao.insertStockAll, (code_, name, getTimeString()))
 
-                klineInfo = Db.dbExecute(StockDao.selectLastKlineByCode, (code_,))
+                klineInfo = Db.execute(StockDao.selectLastKlineByCode, (code_,))
                 lmt = 36500
                 if klineInfo is not None:
                     lastDatetime = datetime.strptime(klineInfo.date, '%Y-%m-%d')
@@ -65,6 +65,7 @@ if __name__ == '__main__':
                     if detailJson['rc'] == 0:
                         detailData = detailJson['data']
                         klines = detailData['klines']
+                        paramsList = []
                         for j in range(len(klines)):
                             jitem = klines[j]
                             jitemSplit = jitem.split(',')
@@ -79,9 +80,15 @@ if __name__ == '__main__':
                             changeRate = jitemSplit[8]
                             changeAmount = jitemSplit[9]
                             turnoverRate = jitemSplit[10]
-                            Db.dbExecute(StockDao.insertStockKline, (date_, code_, open_, close_, high, low, volume,
-                                                                     turnover, amplitude, changeRate, changeAmount,
-                                                                     turnoverRate))
+                            paramsList.append((date_, code_, open_, close_, high, low, volume,
+                                               turnover, amplitude, changeRate, changeAmount,
+                                               turnoverRate))
+                            if len(paramsList) % 1000 == 0:
+                                Db.batchUpdate(StockDao.sqlInsertStockKline(), paramsList)
+                                paramsList.clear()
+                        if len(paramsList) > 0:
+                            Db.batchUpdate(StockDao.sqlInsertStockKline(), paramsList)
+                            paramsList.clear()
                     else:
                         print('detail kline get failed. code : [{}]'.format(code_))
                 else:

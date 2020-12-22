@@ -30,7 +30,7 @@ def getConnection():
     return conn
 
 
-def dbExecute(fun, params=()):
+def execute(fun, params=()):
     try:
         conn = getConnection()
         cursor = conn.cursor()
@@ -42,3 +42,18 @@ def dbExecute(fun, params=()):
         conn.rollback()
     finally:
         conn.close()
+
+def batchUpdate(sql, paramsList):
+    try:
+        conn = getConnection()
+        cursor = conn.cursor()
+        for i in range(len(paramsList)):
+            params = paramsList[i]
+            cursor.execute(sql, params)
+        conn.commit()
+    except Exception as e:
+        print(f'batchUpdate error. {e}')
+        conn.rollback()
+    finally:
+        conn.close()
+

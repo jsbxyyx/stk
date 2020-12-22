@@ -11,7 +11,7 @@ if __name__ == '__main__':
     Db.initConnectionPool()
 
     code = '0.000001'
-    klineInfo = Db.dbExecute(StockDao.selectLastKlineByCode, (code,))
+    klineInfo = Db.execute(StockDao.selectLastKlineByCode, (code,))
     if klineInfo is not None:
         print('date = {}'.format(klineInfo.date))
     else:
