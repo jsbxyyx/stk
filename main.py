@@ -3,6 +3,9 @@ import time
 
 import Db
 
+# https://pypi.tuna.tsinghua.edu.cn/simple/
+# install lib : requests, mariadb
+
 
 def getTimestamp():
     return int(round(time.time() * 1000))
