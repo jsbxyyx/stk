@@ -39,6 +39,7 @@ def dbExecute(fun, params=()):
         return result
     except Exception as e:
         print(f'dbExecute error. {e}')
+        conn.rollback()
     finally:
         conn.close()
 

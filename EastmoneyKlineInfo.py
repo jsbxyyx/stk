@@ -1,7 +1,9 @@
 class EastmoneyKlineInfo(object):
 
-    def __init__(self, date, open, close, high, low, volume, turnover, amplitude, changeRate, changeAmount, turnoverRate):
+    def __init__(self, id, code, date, open, close, high, low, volume, turnover, amplitude, changeRate, changeAmount, turnoverRate):
         # klines
+        self.id = id  #
+        self.code = code  # 股票代码
         self.date = date  # 日期
         self.open = open  # 开盘价
         self.close = close  # 收盘价

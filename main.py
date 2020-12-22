@@ -1,12 +1,14 @@
+# https://pypi.tuna.tsinghua.edu.cn/simple/
+# install lib : requests, mariadb
+
 import warnings
 
 import requests
 import time
+from datetime import datetime
 
 import Db
-
-# https://pypi.tuna.tsinghua.edu.cn/simple/
-# install lib : requests, mariadb
+from StockDao import StockDao
 
 
 def getTimestamp():
@@ -18,19 +20,11 @@ def getTimeString():
     return string
 
 
-def insertStockAll(cursor, params=()):
-    cursor.execute('INSERT IGNORE INTO stock_all (code, name, gmt_create) VALUES (?, ?, ?)', params)
-
-
-def insertStockKline(cursor, params=()):
-    cursor.execute('INSERT IGNORE INTO stock_kline (date, code, open, close, high, low, volume, turnover, amplitude, '
-                   'change_rate, change_amount, turnover_rate) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', params)
-
-
 if __name__ == '__main__':
     # https://55.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=5000&po=0&np=1&ut=bd1d9ddb04089700cf9c27f6f7426281&fltt=2&invt=2&fid=f12&fs=m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23&fields=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f12,f13,f14,f15,f16,f17,f18,f20,f21,f23,f24,f25,f22,f11,f62,f128,f136,f115,f152&_=1608605021839
 
     Db.initConnectionPool()
+    stockDao = StockDao()
 
     ts = getTimestamp()
 
@@ -49,14 +43,22 @@ if __name__ == '__main__':
                 iitem = diff[i]
                 code_ = '{}.{}'.format(iitem['f13'], iitem['f12'])
                 name = iitem['f14']
-                Db.dbExecute(insertStockAll, (code_, name, getTimeString()))
+                Db.dbExecute(StockDao.insertStockAll, (code_, name, getTimeString()))
+
+                klineInfo = Db.dbExecute(StockDao.selectLastKlineByCode, (code_,))
+                lmt = 36500
+                if klineInfo is not None:
+                    lastDatetime = datetime.strptime(klineInfo.date, '%Y-%m-%d')
+                    lmt = abs((datetime.now() - lastDatetime).days)
+                    if lmt == 0:
+                        lmt = 1
 
                 # day k
                 # https://98.push2his.eastmoney.com/api/qt/stock/kline/get?secid=1.600686&ut=fa5fd1943c7b386f172d6893dbfba10b&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&klt=101&fqt=0&end=20500101&lmt=120&_=1608617483343
                 detailUrl = 'https://98.push2his.eastmoney.com/api/qt/stock/kline/get?secid={}.{}&ut' \
                             '=fa5fd1943c7b386f172d6893dbfba10b&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52' \
                             '%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61&klt=101&fqt=0&end=20500101&lmt' \
-                            '={}&_={}'.format(iitem['f13'], iitem['f12'], 36500, getTimestamp())
+                            '={}&_={}'.format(iitem['f13'], iitem['f12'], lmt, getTimestamp())
                 detailResp = requests.get(detailUrl, headers=headers, verify=False)
                 if detailResp.status_code == 200:
                     detailJson = detailResp.json()
@@ -77,8 +79,9 @@ if __name__ == '__main__':
                             changeRate = jitemSplit[8]
                             changeAmount = jitemSplit[9]
                             turnoverRate = jitemSplit[10]
-                            Db.dbExecute(insertStockKline, (date_, code_, open_, close_, high, low, volume, turnover,
-                                                            amplitude, changeRate, changeAmount, turnoverRate))
+                            Db.dbExecute(StockDao.insertStockKline, (date_, code_, open_, close_, high, low, volume,
+                                                                     turnover, amplitude, changeRate, changeAmount,
+                                                                     turnoverRate))
                     else:
                         print('detail kline get failed. code : [{}]'.format(code_))
                 else:
