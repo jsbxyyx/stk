@@ -3,7 +3,7 @@ import mariadb
 pool = None
 user = "root"
 password = "mariadb"
-host = "192.168.1.9"
+host = "mariadb.host"
 port = 3306
 database = "istock"
 
