@@ -1,5 +1,14 @@
-# https://pypi.tuna.tsinghua.edu.cn/simple/
-# install lib : requests, mariadb
+"""
+idea(manager repository) : https://pypi.tuna.tsinghua.edu.cn/simple/
+windows : ~/pip/pip.ini
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+linux : ~/pip/pip.conf
+[global]
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+
+install lib : requests, mariadb, numpy, pandas, matplotlib, TA-Lib
+"""
 
 import requests
 import time
