@@ -24,6 +24,8 @@ def initConnectionPool():
 
 def getConnection():
     try:
+        if pool is None:
+            initConnectionPool()
         conn = pool.get_connection()
     except mariadb.Error as e:
         print(f'Error connecting to MariaDB Platform: {e}')
@@ -38,7 +40,7 @@ def execute(fun, params=()):
         conn.commit()
         return result
     except Exception as e:
-        print(f'dbExecute error. {e}')
+        print(f'execute error. {e}')
         conn.rollback()
     finally:
         conn.close()
